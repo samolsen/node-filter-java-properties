@@ -1,0 +1,24 @@
+{
+  "name": "filter-java-props",
+  "version": "0.1.0",
+  "description": "Filter source files with Java properties. Similar to Maven Resources plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --compilers coffee:coffee-script/register"
+  },
+  "keywords": [
+    "filter",
+    "resources"
+  ],
+  "author": "Sam Olsen <sam@samolsen.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "~2.1.0",
+    "coffee-script": "~1.8.0",
+    "chai": "~1.10.0"
+  },
+  "dependencies": {
+    "common-errors": "~0.4.17",
+    "underscore": "~1.7.0"
+  }
+}
