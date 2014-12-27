@@ -3,20 +3,18 @@ Property = require('./property')
 ArgumentError = require('common-errors').ArgumentError
 
 DEFAULT_OPTIONS =
-  # Some default delimiters, matching Maven Resources plugin defaults
+  # Delimiters matching Maven Resources plugin defaults,
   # see http://maven.apache.org/plugins/maven-resources-plugin/resources-mojo.html
   delimiters: ['${*}', '@'],
   
-  # Close output streams by default, see filterStream()
+  # Close output streams by default, see `PropertyFilterer#filterStream`
   # Set to false when writing to stdout or another stream which can't be closed
   closeOutStream: true
 
 class PropertyFilterer
 
   # Using a static factory function is preferred to direct instantiation
-  # 
-  # Pointless without passing a properties list containing at least one Property.
-  # If delimiters are not passed, then DEFAULT_OPTIONS.delimiters are used
+  #
   constructor: (options)->
     options ||= {}
     @properties = options.properties
@@ -24,6 +22,7 @@ class PropertyFilterer
     @delimiters = [@delimiters] unless _.isArray(@delimiters)
 
   # Pass a string through the filter for each of the receiver's Property objects
+  #
   filterString: (string)->
     _.each @properties, (property)=>
       _.each @delimiters, (delimeter)=>
@@ -32,19 +31,25 @@ class PropertyFilterer
 
   # Filter an input stream. Writes to a string, a provided output stream, or both.
   # 
-  # options: 
-  # inStream        (required) an input stream
-  # outStream       (optional) an output stream to write to
-  # done            (optional) a callback function with signature (error, resultString?) called when the input stream is finished
-  # closeOutStream  (optional)flag indicating if this method should close the output stream
   filterStream: (options)->
     options = _.extend({}, DEFAULT_OPTIONS, options)
     throw new ArgumentError('An input stream is required') unless options && options.inStream
     
+    # An input stream, required
     inStream = options.inStream
+    
+    # An optional output stream to write to
     outStream = options.outStream
+   
+    # An optional callback function with signature (error, resultString?) 
+    # called when the input stream is finished
     done = options.done
+
+    # Pass a string to the `done` callback even if an ouput stream is provided
+    # A string is passed by default when an output stream is not provided
     buildString = options.buildString || !options.outStream
+    
+    # A flag indicating if this method should close the output stream
     closeOutStream = options.closeOutStream
 
     buffer = ''
@@ -79,11 +84,11 @@ class PropertyFilterer
 
 # Create a PropertyFilterer using a string containing .properties file contents
 #
-# options:
-# string  (required) the string to parse the Property list from
-#
-# options may also include any attributes which are used by the PropertyFilterer constructor
+# `options` may include any attributes which are used by the PropertyFilterer constructor
 PropertyFilterer.withString = (options)->
+  # The string to parse the Property list from
+  string = options.string
+
   properties = _.chain(options.string.split("\n"))
     .map (line)-> new Property(line, options) if Property.isParseableString(line)
     .filter (property)-> property # reject undefined items
@@ -94,13 +99,13 @@ PropertyFilterer.withString = (options)->
 
 # Create a PropertyFilterer, parsing an input stream for the Property list
 #
-# options:
-# inStream  (required) an input stream 
-# done      (optional) a callback function with signature (error, PropertyFilterer?) called when the input stream is finished
 PropertyFilterer.withStream = (options)->
   throw new ArgumentError('An input stream is required') unless options && options.inStream
   
+  # An input stream
   inStream = options.inStream
+
+  # An optional callback function with signature (error, PropertyFilterer?) called when the input stream is finished
   done = options.done
 
   properties = []
