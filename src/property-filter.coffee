@@ -7,11 +7,11 @@ DEFAULT_OPTIONS =
   # see http://maven.apache.org/plugins/maven-resources-plugin/resources-mojo.html
   delimiters: ['${*}', '@'],
   
-  # Close output streams by default, see `PropertyFilterer#filterStream`
+  # Close output streams by default, see `PropertyFilter#filterStream`
   # Set to false when writing to stdout or another stream which can't be closed
   closeOutStream: true
 
-class PropertyFilterer
+class PropertyFilter
 
   # Using a static factory function is preferred to direct instantiation
   #
@@ -82,10 +82,10 @@ class PropertyFilterer
 
 ### Static Methods / Factories ###
 
-# Create a PropertyFilterer using a string containing .properties file contents
+# Create a PropertyFilter using a string containing .properties file contents
 #
-# `options` may include any attributes which are used by the PropertyFilterer constructor
-PropertyFilterer.withString = (options)->
+# `options` may include any attributes which are used by the PropertyFilter constructor
+PropertyFilter.withString = (options)->
   # The string to parse the Property list from
   string = options.string
 
@@ -95,17 +95,17 @@ PropertyFilterer.withString = (options)->
     .value()
 
   options = _.extend({}, options, {properties: properties})
-  new PropertyFilterer(options)
+  new PropertyFilter(options)
 
-# Create a PropertyFilterer, parsing an input stream for the Property list
+# Create a PropertyFilter, parsing an input stream for the Property list
 #
-PropertyFilterer.withStream = (options)->
+PropertyFilter.withStream = (options)->
   throw new ArgumentError('An input stream is required') unless options && options.inStream
   
   # An input stream
   inStream = options.inStream
 
-  # An optional callback function with signature (error, PropertyFilterer?) called when the input stream is finished
+  # An optional callback function with signature (error, PropertyFilter?) called when the input stream is finished
   done = options.done
 
   properties = []
@@ -128,12 +128,12 @@ PropertyFilterer.withStream = (options)->
   inStream.on 'end', ()->
     process(buffer) if buffer.length > 0
     options = _.extend({}, options, {properties: properties})
-    done && done(null, new PropertyFilterer(options))
+    done && done(null, new PropertyFilter(options))
 
   inStream.on 'error', (e)->
     done && done(e)
 
 
-PropertyFilterer.getDefaultOptions = ()-> DEFAULT_OPTIONS
+PropertyFilter.getDefaultOptions = ()-> DEFAULT_OPTIONS
 
-module.exports = PropertyFilterer
+module.exports = PropertyFilter

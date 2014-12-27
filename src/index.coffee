@@ -1,1 +1,1 @@
-module.exports = require('./property-filterer')
+module.exports = require('./property-filter')

@@ -5,7 +5,7 @@ var clean = require('gulp-clean');
 var docco = require("gulp-docco");
 
 gulp.task('clean', function () {
-  return gulp.src('./lib', {read: false})
+  return gulp.src(['./lib', './docs/**/*.html', './docs/**/*.css', './docs/**/fonts'], {read: false})
     .pipe(clean());
 });
 

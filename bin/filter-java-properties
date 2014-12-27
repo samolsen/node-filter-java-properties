@@ -3,7 +3,7 @@
 
 var args = require('minimist')(process.argv.slice(2)),
     fs = require('fs'),
-    PropertyFilterer = require('../lib/property-filterer');
+    PropertyFilter = require('../lib/property-filter');
 
 var filterOptions = {};
 
@@ -19,12 +19,12 @@ if (outpath) {
 // Filter source
 filterOptions.inStream = fs.createReadStream(args._[1])
 
-// Build PropertyFilterer.withStream options
+// Build PropertyFilter.withStream options
 //
 var withStreamOptions = {
   inStream: fs.createReadStream(args._[0]),
-  done: function (err, filterer) {
-    filterer.filterStream(filterOptions);
+  done: function (err, filter) {
+    filter.filterStream(filterOptions);
   }
 };
 
@@ -34,4 +34,4 @@ if (delimiters) {
   withStreamOptions.delimiters = delimiters;
 }
 
-PropertyFilterer.withStream(withStreamOptions);
+PropertyFilter.withStream(withStreamOptions);

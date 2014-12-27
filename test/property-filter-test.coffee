@@ -1,35 +1,35 @@
-PropertyFilterer = require '../src/property-filterer'
+PropertyFilter = require '../src/property-filter'
 Property = require '../src/property'
 fs = require('fs')
 path = require('path')
 expect = require('chai').expect
 ArgumentError = require('common-errors').ArgumentError
 
-describe 'PropertyFilterer', ()->
+describe 'PropertyFilter', ()->
 
   property = null
-  filterer = null
+  filter = null
   beforeEach ()->
     property = new Property('foo=bar')
-    filterer = new PropertyFilterer(properties: [property]);
+    filter = new PropertyFilter(properties: [property]);
   
   describe 'constructor', ()->
     it 'should set the properties attr', ()->
-      expect(filterer.properties).to.eql([property])
+      expect(filter.properties).to.eql([property])
 
     it 'should use default delimiters if they are not passed', ()->
-      defaultOptions = PropertyFilterer.getDefaultOptions()
-      expect(filterer.delimiters).to.eql(defaultOptions.delimiters)
+      defaultOptions = PropertyFilter.getDefaultOptions()
+      expect(filter.delimiters).to.eql(defaultOptions.delimiters)
 
     it 'should override default delimiters if passed', ()->
       delimiters = '%*%'
-      filterer = new PropertyFilterer(properties: [property], delimiters: delimiters)
-      expect(filterer.delimiters).to.eql([delimiters])
+      filter = new PropertyFilter(properties: [property], delimiters: delimiters)
+      expect(filter.delimiters).to.eql([delimiters])
 
   describe 'filterString', ()->
     it 'should filter multiple properties', ()->
       string = "hello @foo@\ngoodbye ${foo}"
-      expect(filterer.filterString(string)).to.equal("hello bar\ngoodbye bar")
+      expect(filter.filterString(string)).to.equal("hello bar\ngoodbye bar")
 
   describe 'filterStream', ()->
     inFilePath = path.resolve(__dirname, 'test-config.json')
@@ -38,11 +38,11 @@ describe 'PropertyFilterer', ()->
       inStream = fs.createReadStream(inFilePath)
 
     it 'should throw an error if an input stream is not provided', ()->
-      fn = ()-> filterer.filterStream()
+      fn = ()-> filter.filterStream()
       expect(fn).to.throw(ArgumentError)
 
     it 'should return a string if an outStream is not provided', (done)->
-      filterer.filterStream(
+      filter.filterStream(
         inStream: inStream,
         done: (err, resultString)->
           expect(err).to.be.null
@@ -53,7 +53,7 @@ describe 'PropertyFilterer', ()->
     it 'should not return a string if an outStream is passed without the buildString option set', (done)->
       outStream = fs.createWriteStream('/tmp/property-filter-test')
 
-      filterer.filterStream(
+      filter.filterStream(
         inStream: inStream,
         outStream: outStream,
         done: (err, resultString)->
@@ -65,7 +65,7 @@ describe 'PropertyFilterer', ()->
     it 'should return a string if an outStream is passed with the buildString option set', (done)->
       outStream = fs.createWriteStream('/tmp/property-filter-test')
 
-      filterer.filterStream(
+      filter.filterStream(
         inStream: inStream,
         outStream: outStream,
         buildString: true,
@@ -80,13 +80,13 @@ describe 'PropertyFilterer', ()->
       propertiesString = "foo=hello\n\n\nbar=world"
 
       it 'should skip blank lines', ()->
-        filterer = PropertyFilterer.withString(string: propertiesString)
-        expect(filterer.properties).to.have.length(2)
+        filter = PropertyFilter.withString(string: propertiesString)
+        expect(filter.properties).to.have.length(2)
 
       it 'should accept a delimiters option', ()->
         delimiters = ['%']
-        filterer = PropertyFilterer.withString(string: propertiesString, delimiters: delimiters)
-        expect(filterer.delimiters).to.eql(delimiters)
+        filter = PropertyFilter.withString(string: propertiesString, delimiters: delimiters)
+        expect(filter.delimiters).to.eql(delimiters)
 
     describe 'withStream', ()->
       filePath = path.resolve(__dirname, 'test.properties')  
@@ -96,26 +96,26 @@ describe 'PropertyFilterer', ()->
         inStream = fs.createReadStream(filePath)
       
       it 'should throw an error if an input stream is not provided', ()->
-        fn = ()-> PropertyFilterer.withStream()
+        fn = ()-> PropertyFilter.withStream()
         expect(fn).to.throw(ArgumentError)
 
       it 'should read the stream', (done)->   
-        PropertyFilterer.withStream(
+        PropertyFilter.withStream(
           inStream: inStream,
-          done: (err, filterer)->
+          done: (err, filter)->
             expect(err).to.be.null
-            expect(filterer).not.to.be.null
-            expect(filterer.properties).to.have.length(12)
+            expect(filter).not.to.be.null
+            expect(filter.properties).to.have.length(12)
             done()
         )
 
       it 'should accept a delimiters option', (done)->
         delimiters = ['%']
 
-        PropertyFilterer.withStream(
+        PropertyFilter.withStream(
           inStream: inStream,
           delimiters: delimiters
-          done: (err, filterer)->
-            expect(filterer.delimiters).to.eql(delimiters)
+          done: (err, filter)->
+            expect(filter.delimiters).to.eql(delimiters)
             done()
         )        
