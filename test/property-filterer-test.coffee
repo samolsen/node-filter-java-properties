@@ -1,5 +1,7 @@
 PropertyFilterer = require '../src/property-filterer'
 Property = require '../src/property'
+fs = require('fs')
+path = require('path')
 expect = require('chai').expect
 
 describe 'PropertyFilterer', ()->
@@ -30,7 +32,41 @@ describe 'PropertyFilterer', ()->
 
   describe 'static methods', ()->
     describe 'withString', ()->
+      propertiesString = "foo=hello\n\n\nbar=world"
+
       it 'should skip blank lines', ()->
-        string = "foo=hello\n\n\nbar=world"
-        filterer = PropertyFilterer.withString(string)
+        filterer = PropertyFilterer.withString(propertiesString)
         expect(filterer.properties).to.have.length(2)
+
+      it 'should accept a delimiters option', ()->
+        delimiters = ['%']
+        filterer = PropertyFilterer.withString(propertiesString, {delimiters: delimiters})
+        expect(filterer.delimiters).to.eql(delimiters)
+
+    describe 'withStream', ()->
+      filePath = path.resolve(__dirname, 'test.properties')  
+
+      inStream = null
+      beforeEach ()->
+        inStream = fs.createReadStream(filePath)
+      
+      it 'should read the stream', (done)->   
+        PropertyFilterer.withStream(
+          inStream: inStream,
+          done: (err, filterer)->
+            expect(err).to.be.null
+            expect(filterer).not.to.be.null
+            expect(filterer.properties).to.have.length(6)
+            done()
+        )
+
+      it 'should accept a delimiters option', (done)->
+        delimiters = ['%']
+
+        PropertyFilterer.withStream(
+          inStream: inStream,
+          delimiters: delimiters
+          done: (err, filterer)->
+            expect(filterer.delimiters).to.eql(delimiters)
+            done()
+        )        

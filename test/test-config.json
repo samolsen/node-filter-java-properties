@@ -1,0 +1,12 @@
+{
+  "foo": "@foo@",
+  "bar": "${bar}",
+  "hello": {
+    "world": "Hello World"
+  },
+  "Astronauts": [
+    "Neil Armstrong",
+    "Buzz Aldrin",
+    "Alan Shepard"
+  ]
+}

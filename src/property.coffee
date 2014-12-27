@@ -8,6 +8,7 @@ class Property
     throw new ArgumentError('property string could not be split on an "=" token') unless Property.isParseableString(string)
     
     split = string.split('=')
+    @string = string
     @key = split.shift().trim()
     @value = split.join('').trim()
     
