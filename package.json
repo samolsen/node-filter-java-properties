@@ -2,13 +2,14 @@
   "name": "filter-java-properties",
   "version": "0.1.0",
   "description": "Filter source files with Java properties. Similar to Maven Resources plugin",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "mocha --compilers coffee:coffee-script/register",
     "prepublish": "gulp"
   },
   "keywords": [
     "filter",
+    "properties",
     "resources"
   ],
   "author": "Sam Olsen <sam@samolsen.com>",
