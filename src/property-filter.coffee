@@ -2,19 +2,21 @@ _ = require('underscore')
 Property = require('./property')
 ArgumentError = require('common-errors').ArgumentError
 
+### Defaults ###
+
 DEFAULT_OPTIONS =
   # Delimiters matching Maven Resources plugin defaults,
   # see http://maven.apache.org/plugins/maven-resources-plugin/resources-mojo.html
   delimiters: ['${*}', '@'],
   
   # Close output streams by default, see `PropertyFilter#filterStream`
-  # Set to false when writing to stdout or another stream which can't be closed
   closeOutStream: true
+
+## Property Filter ##
 
 class PropertyFilter
 
   # Using a static factory function is preferred to direct instantiation
-  #
   constructor: (options)->
     options ||= {}
     @properties = options.properties
@@ -22,7 +24,6 @@ class PropertyFilter
     @delimiters = [@delimiters] unless _.isArray(@delimiters)
 
   # Pass a string through the filter for each of the receiver's Property objects
-  #
   filterString: (string)->
     _.each @properties, (property)=>
       _.each @delimiters, (delimeter)=>
@@ -30,36 +31,50 @@ class PropertyFilter
     string
 
   # Filter an input stream. Writes to a string, a provided output stream, or both.
-  # 
   filterStream: (options)->
     options = _.extend({}, DEFAULT_OPTIONS, options)
     throw new ArgumentError('An input stream is required') unless options && options.inStream
     
-    # An input stream, required
+    # `options.inStream` __*required*__ -
+    # An input stream to filter
     inStream = options.inStream
     
-    # An optional output stream to write to
+    # `options.outStream` *optional* -
+    # An output stream to write to
     outStream = options.outStream
    
-    # An optional callback function with signature (error, resultString?) 
+    # `options.done` *optional* -
+    # Callback function with signature `function(error, resultString?)`,
     # called when the input stream is finished
     done = options.done
 
-    # Pass a string to the `done` callback even if an ouput stream is provided
-    # A string is passed by default when an output stream is not provided
+    # `options.buildString` *optional* -
+    # A flag indicating the `done` callback should receive a filtered string argument
+    # regardless of whether an output stream is available.
+    # 
+    # To use less memory, by default a result string is not built (and passed to the callback) 
+    # when an output stream is provided.
     buildString = options.buildString || !options.outStream
     
-    # A flag indicating if this method should close the output stream
+    # `options.closeOutStream` *optional* -
+    # A flag indicating if this method should close the output stream. 
+    # Set to false when writing to `stdout` or another stream which can't be closed
     closeOutStream = options.closeOutStream
 
+    # Read buffer
     buffer = ''
+
+    # Results buffer
     resultString = '' if buildString
 
+    # Filter each line, writing to the output stream and/or appending to the result string 
     process = (line)=> 
       filteredLine = @filterString(line)
       resultString += filteredLine if buildString
       outStream && outStream.write(filteredLine)
 
+    # Read input stream
+    #
     inStream.on 'data', (chunk)->
       buffer += chunk
       idx = buffer.indexOf("\n")
@@ -98,22 +113,31 @@ PropertyFilter.withString = (options)->
   new PropertyFilter(options)
 
 # Create a PropertyFilter, parsing an input stream for the Property list
-#
 PropertyFilter.withStream = (options)->
   throw new ArgumentError('An input stream is required') unless options && options.inStream
   
-  # An input stream
+  # `options.inStream` __*required*__ -
+  # An input stream used to parse properties
   inStream = options.inStream
 
-  # An optional callback function with signature (error, PropertyFilter?) called when the input stream is finished
+  # `options.inStream` *optional* -
+
+  # Callback function with signature `function(error, PropertyFilter?)` called when the input 
+  # stream is finished
   done = options.done
 
+  # Parsed properties list
   properties = []
+  
+  # Read buffer
   buffer = ''
+
+  # Create a `Property` for each line which can be parsed in the input stream 
   process = (line)-> 
     if Property.isParseableString(line)
       properties.push(new Property(line, options))
 
+  # Read input stream
   inStream.on 'data', (chunk)->
     buffer += chunk
     idx = buffer.indexOf("\n")
@@ -133,7 +157,7 @@ PropertyFilter.withStream = (options)->
   inStream.on 'error', (e)->
     done && done(e)
 
-
-PropertyFilter.getDefaultOptions = ()-> DEFAULT_OPTIONS
+# Get a copy of the `DEFAULT_OPTIONS` object
+PropertyFilter.getDefaultOptions = ()-> _.clone(DEFAULT_OPTIONS)
 
 module.exports = PropertyFilter
