@@ -80,12 +80,12 @@ describe 'PropertyFilterer', ()->
       propertiesString = "foo=hello\n\n\nbar=world"
 
       it 'should skip blank lines', ()->
-        filterer = PropertyFilterer.withString(propertiesString)
+        filterer = PropertyFilterer.withString(string: propertiesString)
         expect(filterer.properties).to.have.length(2)
 
       it 'should accept a delimiters option', ()->
         delimiters = ['%']
-        filterer = PropertyFilterer.withString(propertiesString, {delimiters: delimiters})
+        filterer = PropertyFilterer.withString(string: propertiesString, delimiters: delimiters)
         expect(filterer.delimiters).to.eql(delimiters)
 
     describe 'withStream', ()->
