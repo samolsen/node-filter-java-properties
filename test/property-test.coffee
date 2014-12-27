@@ -53,7 +53,7 @@ describe 'Property', ()->
         expect(isRegex).to.be.true
 
       it 'should return a regex matching bracketed tokens', ()->
-        expect(regex.toString()).to.equal('/\\$\\{.*\\}/g')
+        expect(regex.toString()).to.equal('/\\$\\{foo\\.bar\\}/g')
 
       it 'should return a regex with the global flag set', ()->
         expect(regex.toString()).to.match(/\/([imy]+)?g([imy]+)?$/)
@@ -69,7 +69,7 @@ describe 'Property', ()->
         expect(isRegex).to.be.true
 
       it 'should return a regex matching bracketed tokens', ()->
-        expect(regex.toString()).to.equal('/'+ token + '.*' + token + '/' + 'g')
+        expect(regex.toString()).to.equal('/'+ token + 'foo\\.bar' + token + '/' + 'g')
 
       it 'should return a regex with the global flag set', ()->
         expect(regex.toString()).to.match(/\/([imy]+)?g([imy]+)?$/)

@@ -23,7 +23,7 @@ class Property
     else if splitToken.length == 1
       splitToken = [splitToken[0], splitToken[0]]
 
-    new RegExp(escapeRegExp(splitToken[0]) + '.*' + escapeRegExp(splitToken[1]), 'g')
+    new RegExp(escapeRegExp(splitToken[0]) + escapeRegExp(@key) + escapeRegExp(splitToken[1]), 'g')
 
   filterString: (string, token)->
     regex = @toRegExp(token)
