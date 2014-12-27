@@ -1,5 +1,5 @@
 {
-  "name": "filter-java-props",
+  "name": "filter-java-properties",
   "version": "0.1.0",
   "description": "Filter source files with Java properties. Similar to Maven Resources plugin",
   "main": "index.js",

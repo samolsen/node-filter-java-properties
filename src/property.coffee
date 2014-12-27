@@ -5,10 +5,9 @@ escapeRegExp = (string)-> string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 class Property
   constructor: (string)->
-    split = string.split('=')
+    throw new ArgumentError('property string could not be split on an "=" token') unless Property.isParseableString(string)
     
-    throw new ArgumentError('property string could not be split on an "=" token') if split.length < 2
-
+    split = string.split('=')
     @key = split.shift().trim()
     @value = split.join('').trim()
     
@@ -23,7 +22,13 @@ class Property
     else if splitToken.length == 1
       splitToken = [splitToken[0], splitToken[0]]
 
-    return new RegExp(escapeRegExp(splitToken[0]) + '.*' + escapeRegExp(splitToken[1]), 'g')
+    new RegExp(escapeRegExp(splitToken[0]) + '.*' + escapeRegExp(splitToken[1]), 'g')
+
+  filterString: (string, token)->
+    regex = @toRegExp(token)
+    string.replace(regex, @value)
     
+Property.isParseableString = (string)-> (string.match(/\=/g) || []).length >= 1
+
     
 module.exports = Property
