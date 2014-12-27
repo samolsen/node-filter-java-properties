@@ -25,14 +25,14 @@ class PropertyFilterer
     inStream = options.inStream
     outStream = options.outStream
     done = options.done
-    skipBuildString = options.skipBuildString
+    buildString = options.buildString || !options.outStream
 
     buffer = ''
-    resultString = '' unless skipBuildString
+    resultString = '' if buildString
 
     process = (line)=> 
       filteredLine = @filterString(line)
-      resultString += filteredLine unless skipBuildString
+      resultString += filteredLine if buildString
       outStream && outStream.write(filteredLine)
 
     inStream.on 'data', (chunk)->
@@ -48,6 +48,7 @@ class PropertyFilterer
 
     inStream.on 'end', ()->
       process(buffer) if buffer.length > 0
+      outStream && outStream.end()
       done && done(null, resultString)
 
     inStream.on 'error', (e)->

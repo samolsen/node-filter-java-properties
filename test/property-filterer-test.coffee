@@ -32,16 +32,16 @@ describe 'PropertyFilterer', ()->
       expect(filterer.filterString(string)).to.equal("hello bar\ngoodbye bar")
 
   describe 'filterStream', ()->
-    filePath = path.resolve(__dirname, 'test-config.json')
+    inFilePath = path.resolve(__dirname, 'test-config.json')
     inStream = null
     beforeEach ()->
-      inStream = fs.createReadStream(filePath)
+      inStream = fs.createReadStream(inFilePath)
 
     it 'should throw an error if an input stream is not provided', ()->
       fn = ()-> filterer.filterStream()
       expect(fn).to.throw(ArgumentError)
 
-    it 'should return a string', (done)->
+    it 'should return a string if an outStream is not provided', (done)->
       filterer.filterStream(
         inStream: inStream,
         done: (err, resultString)->
@@ -50,16 +50,30 @@ describe 'PropertyFilterer', ()->
           done()
       )
 
-    it 'should not return a string if the skipBuildString string option is set', (done)->
+    it 'should not return a string if an outStream is passed without the buildString option set', (done)->
+      outStream = fs.createWriteStream('/tmp/property-filter-test')
+
       filterer.filterStream(
         inStream: inStream,
-        skipBuildString: true,
+        outStream: outStream,
         done: (err, resultString)->
           expect(err).to.be.null
           expect(resultString).to.be.undefined
           done()
       )
+    
+    it 'should return a string if an outStream is passed with the buildString option set', (done)->
+      outStream = fs.createWriteStream('/tmp/property-filter-test')
 
+      filterer.filterStream(
+        inStream: inStream,
+        outStream: outStream,
+        buildString: true,
+        done: (err, resultString)->
+          expect(err).to.be.null
+          expect(resultString).not.to.be.undefined
+          done()
+      )
 
   describe 'static methods', ()->
     describe 'withString', ()->
