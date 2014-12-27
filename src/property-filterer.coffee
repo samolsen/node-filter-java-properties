@@ -1,19 +1,19 @@
 _ = require('underscore')
 Property = require('./property')
 
-OPTIONS_DEFAULTS =
-  delimeters: ['${*}', '@']
+DEFAULT_OPTIONS =
+  delimiters: ['${*}', '@']
 
 class PropertyFilterer
-  constructor: (properties, options)->
+  constructor: (options)->
     options ||= {}
-    @properties = properties
-    @delimeters = _.extend({}, OPTIONS_DEFAULTS, options.delimeters)
-
+    @properties = options.properties
+    @delimiters = options.delimiters || DEFAULT_OPTIONS.delimiters 
+    @delimiters = [@delimiters] unless _.isArray(@delimiters)
 
   filterString: (string)->
-    _.each @properties, (property)->
-      _.each @delimeters, (delimeter)->
+    _.each @properties, (property)=>
+      _.each @delimiters, (delimeter)=>
         string = property.filterString(string, delimeter)
     string
 
@@ -23,6 +23,8 @@ PropertyFilterer.withString = (string, options)->
     .filter (property)-> property # reject undefined items
     .value()
 
-  new PropertyFilterer(properties)
+  new PropertyFilterer(properties: properties)
+
+PropertyFilterer.getDefaultOptions = ()-> DEFAULT_OPTIONS
 
 module.exports = PropertyFilterer
