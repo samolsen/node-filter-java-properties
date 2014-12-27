@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "common-errors": "~0.4.17",
+    "minimist": "^1.1.0",
     "underscore": "~1.7.0"
   }
 }

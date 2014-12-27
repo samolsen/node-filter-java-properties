@@ -4,7 +4,8 @@ ArgumentError = require('common-errors').ArgumentError
 
 
 DEFAULT_OPTIONS =
-  delimiters: ['${*}', '@']
+  delimiters: ['${*}', '@'],
+  closeOutStream: true
 
 class PropertyFilterer
   constructor: (options)->
@@ -20,12 +21,14 @@ class PropertyFilterer
     string
 
   filterStream: (options)->
+    options = _.extend({}, DEFAULT_OPTIONS, options)
     throw new ArgumentError('An input stream is required') unless options && options.inStream
     
     inStream = options.inStream
     outStream = options.outStream
     done = options.done
     buildString = options.buildString || !options.outStream
+    closeOutStream = options.closeOutStream
 
     buffer = ''
     resultString = '' if buildString
@@ -48,11 +51,11 @@ class PropertyFilterer
 
     inStream.on 'end', ()->
       process(buffer) if buffer.length > 0
-      outStream && outStream.end()
+      outStream && closeOutStream && outStream.end()
       done && done(null, resultString)
 
     inStream.on 'error', (e)->
-      outStream && outStream.end()
+      outStream && closeOutStream && outStream.end()
       done && done(e)
 
 

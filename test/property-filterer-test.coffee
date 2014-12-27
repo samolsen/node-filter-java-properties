@@ -105,7 +105,7 @@ describe 'PropertyFilterer', ()->
           done: (err, filterer)->
             expect(err).to.be.null
             expect(filterer).not.to.be.null
-            expect(filterer.properties).to.have.length(6)
+            expect(filterer.properties).to.have.length(12)
             done()
         )
 

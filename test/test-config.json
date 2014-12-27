@@ -2,11 +2,17 @@
   "foo": "@foo@",
   "bar": "${bar}",
   "hello": {
-    "world": "Hello World"
+    "world": "${hello.world}"
   },
   "Astronauts": [
-    "Neil Armstrong",
-    "Buzz Aldrin",
-    "Alan Shepard"
-  ]
+    "@astronauts.armstrong@",
+    "@astronauts.aldrin@",
+    "${astronauts.shepard}"
+  ],
+  "website": "@google@",
+  "cheeses": {
+    "danish": "${danish}",
+    "hard": ["${parm}"],
+    "soft": ["@soft.brie@", "@soft.goat@", "${soft.camembert}", "soft.brie"]
+  }
 }
