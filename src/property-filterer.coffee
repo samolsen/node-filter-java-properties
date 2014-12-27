@@ -20,6 +20,39 @@ class PropertyFilterer
     string
 
   filterStream: (options)->
+    throw new ArgumentError('An input stream is required') unless options && options.inStream
+    
+    inStream = options.inStream
+    outStream = options.outStream
+    done = options.done
+    skipBuildString = options.skipBuildString
+
+    buffer = ''
+    resultString = '' unless skipBuildString
+
+    process = (line)=> 
+      filteredLine = @filterString(line)
+      resultString += filteredLine unless skipBuildString
+      outStream && outStream.write(filteredLine)
+
+    inStream.on 'data', (chunk)->
+      buffer += chunk
+      idx = buffer.indexOf("\n")
+      while idx > -1
+        idx++
+        line = buffer.substring(0, idx)
+        buffer = buffer.substring(idx)
+        process(line)
+        idx = buffer.indexOf("\n")
+      true
+
+    inStream.on 'end', ()->
+      process(buffer) if buffer.length > 0
+      done && done(null, resultString)
+
+    inStream.on 'error', (e)->
+      outStream && outStream.end()
+      done && done(e)
 
 
 PropertyFilterer.withString = (string, options)->
@@ -44,7 +77,7 @@ PropertyFilterer.withStream = (options)->
       properties.push(new Property(line, options))
 
   inStream.on 'data', (chunk)->
-    buffer += chunk.toString()
+    buffer += chunk
     idx = buffer.indexOf("\n")
     while idx > -1
       idx++

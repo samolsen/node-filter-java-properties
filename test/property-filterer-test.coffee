@@ -31,6 +31,36 @@ describe 'PropertyFilterer', ()->
       string = "hello @foo@\ngoodbye ${foo}"
       expect(filterer.filterString(string)).to.equal("hello bar\ngoodbye bar")
 
+  describe 'filterStream', ()->
+    filePath = path.resolve(__dirname, 'test-config.json')
+    inStream = null
+    beforeEach ()->
+      inStream = fs.createReadStream(filePath)
+
+    it 'should throw an error if an input stream is not provided', ()->
+      fn = ()-> filterer.filterStream()
+      expect(fn).to.throw(ArgumentError)
+
+    it 'should return a string', (done)->
+      filterer.filterStream(
+        inStream: inStream,
+        done: (err, resultString)->
+          expect(err).to.be.null
+          expect(resultString).not.to.be.null
+          done()
+      )
+
+    it 'should not return a string if the skipBuildString string option is set', (done)->
+      filterer.filterStream(
+        inStream: inStream,
+        skipBuildString: true,
+        done: (err, resultString)->
+          expect(err).to.be.null
+          expect(resultString).to.be.undefined
+          done()
+      )
+
+
   describe 'static methods', ()->
     describe 'withString', ()->
       propertiesString = "foo=hello\n\n\nbar=world"
