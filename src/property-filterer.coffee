@@ -19,6 +19,9 @@ class PropertyFilterer
         string = property.filterString(string, delimeter)
     string
 
+  filterStream: (options)->
+
+
 PropertyFilterer.withString = (string, options)->
   properties = _.chain(string.split("\n"))
     .map (line)-> new Property(line, options) if Property.isParseableString(line)
@@ -29,7 +32,7 @@ PropertyFilterer.withString = (string, options)->
   new PropertyFilterer(options)
 
 PropertyFilterer.withStream = (options)->
-  throw new ArgumentError('An input stream is required') unless options.inStream
+  throw new ArgumentError('An input stream is required') unless options && options.inStream
   
   inStream = options.inStream
   done = options.done

@@ -3,6 +3,7 @@ Property = require '../src/property'
 fs = require('fs')
 path = require('path')
 expect = require('chai').expect
+ArgumentError = require('common-errors').ArgumentError
 
 describe 'PropertyFilterer', ()->
 
@@ -50,6 +51,10 @@ describe 'PropertyFilterer', ()->
       beforeEach ()->
         inStream = fs.createReadStream(filePath)
       
+      it 'should throw an error if an input stream is not provided', ()->
+        fn = ()-> PropertyFilterer.withStream()
+        expect(fn).to.throw(ArgumentError)
+
       it 'should read the stream', (done)->   
         PropertyFilterer.withStream(
           inStream: inStream,
