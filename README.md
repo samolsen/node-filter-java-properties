@@ -6,7 +6,7 @@ The package contains a Javascript API and CLI for filtering strings/input stream
 
 The JS API consists of a `PropertyFilter` class, which takes a **.properties** file, and filters strings or input streams. See the [PropertyFilter docs](docs/property-filter.html) for greater detail. 
 
-#### Creating a `PropertyFilter` with properties as a string
+#### Creating a PropertyFilter with properties as a string
 
 When the contents of a **.properties** file is a string, use `PropertyFilter.withString()`.
 
@@ -15,7 +15,7 @@ var propertiesString = fs.readFileSync('/tmp/configure.properties').toString();
 var filter = PropertyFilter.withString({string: propertiesString});
 ```
 
-#### Creating a `PropertyFilter` with properties from an input stream
+#### Creating a PropertyFilter with properties from an input stream
 
 When the contents of a **.properties** file is from an input stream, use `PropertyFilter.withStream()`.
 
@@ -30,7 +30,7 @@ PropertyFilter.withStream({
 });
 ```
 
-#### `PropertyFilter` delimiters
+#### PropertyFilter delimiters
 
 `PropertyFilter` instances use the Maven Resources filtering delimiter defaults of `${*}` and `@`. These delimiters may be overriden by passing a `delimiters:` option to `PropertyFilter.withString()` or `PropertyFilter.withStream()`.
 
@@ -41,7 +41,7 @@ PropertyFilter.withStream({inStream: inputStream, delimiters: ['%', '${*}', '(*)
 ```
 
 
-#### Using a **PropertyFilter**
+#### Using a PropertyFilter
 
 As with creating the `PropertyFilter`, filtering works on strings and streams.
 
