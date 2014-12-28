@@ -1,1 +1,1 @@
-module.exports = require('./lib/property-filter');
+module.exports.PropertyFilter = require('./lib/property-filter');
