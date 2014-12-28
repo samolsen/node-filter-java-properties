@@ -5,7 +5,7 @@ var clean = require('gulp-clean');
 var docco = require("gulp-docco");
 
 gulp.task('clean', function () {
-  return gulp.src(['./lib', './docs/**/*.html', './docs/**/*.css', './docs/**/fonts'], {read: false})
+  return gulp.src(['./lib', './html-docs/**/*.html', './html-docs/**/*.css', './html-docs/**/fonts'], {read: false})
     .pipe(clean());
 });
 
@@ -18,7 +18,7 @@ gulp.task('coffee', function () {
 gulp.task('generate-docs', function () {
   return gulp.src('./src/*.coffee')
     .pipe(docco())
-    .pipe(gulp.dest('./docs'))
+    .pipe(gulp.dest('./html-docs'))
 });
 
 gulp.task('default', ['clean', 'coffee', 'generate-docs']);
