@@ -7,6 +7,9 @@
     "test": "mocha --compilers coffee:coffee-script/register",
     "prepublish": "gulp"
   },
+  "bin": {
+    "filter-java-properties": "./bin/filter-java-properties"
+  },
   "keywords": [
     "filter",
     "properties",

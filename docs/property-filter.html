@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>property-filter.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>property-filter.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>_ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>)
+Property = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./property'</span>)
+ArgumentError = <span class="hljs-built_in">require</span>(<span class="hljs-string">'common-errors'</span>).ArgumentError</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="defaults">Defaults</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+DEFAULT_OPTIONS =</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Delimiters matching Maven Resources plugin defaults,
+see <a href="http://maven.apache.org/plugins/maven-resources-plugin/resources-mojo.html">http://maven.apache.org/plugins/maven-resources-plugin/resources-mojo.html</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">delimiters</span>: [<span class="hljs-string">'${*}'</span>, <span class="hljs-string">'@'</span>],</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Close output streams by default, see <code>PropertyFilter#filterStream</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">closeOutStream</span>: <span class="hljs-literal">true</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h1 id="property-filter">Property Filter</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PropertyFilter</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Using a static factory function is preferred to direct instantiation</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(options)</span>-&gt;</span>
+    options ||= {}
+    <span class="hljs-property">@properties</span> = options.properties
+    <span class="hljs-property">@delimiters</span> = options.delimiters || DEFAULT_OPTIONS.delimiters 
+    <span class="hljs-property">@delimiters</span> = [<span class="hljs-property">@delimiters</span>] <span class="hljs-keyword">unless</span> _.isArray(<span class="hljs-property">@delimiters</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Pass a string through the filter for each of the receiver’s Property objects</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">filterString</span>: <span class="hljs-function"><span class="hljs-params">(string)</span>-&gt;</span>
+    _.each <span class="hljs-property">@properties</span>, <span class="hljs-function"><span class="hljs-params">(property)</span>=&gt;</span>
+      _.each <span class="hljs-property">@delimiters</span>, <span class="hljs-function"><span class="hljs-params">(delimeter)</span>=&gt;</span>
+        string = property.filterString(string, delimeter)
+    string</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Filter an input stream. Writes to a string, a provided output stream, or both.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">filterStream</span>: <span class="hljs-function"><span class="hljs-params">(options)</span>-&gt;</span>
+    options = _.extend({}, DEFAULT_OPTIONS, options)
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> ArgumentError(<span class="hljs-string">'An input stream is required'</span>) <span class="hljs-keyword">unless</span> options &amp;&amp; options.inStream</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p><code>options.inStream</code> <strong><em>required</em></strong> -
+An input stream to filter</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    inStream = options.inStream</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p><code>options.outStream</code> <em>optional</em> -
+An output stream to write to</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    outStream = options.outStream</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p><code>options.done</code> <em>optional</em> -
+Callback function with signature <code>function(error, resultString?)</code>,
+called when the input stream is finished</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    done = options.done</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p><code>options.buildString</code> <em>optional</em> -
+A flag indicating the <code>done</code> callback should receive a filtered string argument
+regardless of whether an output stream is available.</p>
+<p>To use less memory, by default a result string is not built (and passed to the callback) 
+when an output stream is provided.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    buildString = options.buildString || !options.outStream</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p><code>options.closeOutStream</code> <em>optional</em> -
+A flag indicating if this method should close the output stream. 
+Set to false when writing to <code>stdout</code> or another stream which can’t be closed</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    closeOutStream = options.closeOutStream</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Read buffer</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    buffer = <span class="hljs-string">''</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Results buffer</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    resultString = <span class="hljs-string">''</span> <span class="hljs-keyword">if</span> buildString</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Filter each line, writing to the output stream and/or appending to the result string </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">process</span> = <span class="hljs-params">(line)</span>=&gt;</span> 
+      filteredLine = <span class="hljs-property">@filterString</span>(line)
+      resultString += filteredLine <span class="hljs-keyword">if</span> buildString
+      outStream &amp;&amp; outStream.write(filteredLine)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Read input stream</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    inStream.<span class="hljs-literal">on</span> <span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-params">(chunk)</span>-&gt;</span>
+      buffer += chunk
+      idx = buffer.indexOf(<span class="hljs-string">"\n"</span>)
+      <span class="hljs-keyword">while</span> idx &gt; -<span class="hljs-number">1</span>
+        idx++
+        line = buffer.substring(<span class="hljs-number">0</span>, idx)
+        buffer = buffer.substring(idx)
+        process(line)
+        idx = buffer.indexOf(<span class="hljs-string">"\n"</span>)
+      <span class="hljs-literal">true</span>
+
+    inStream.<span class="hljs-literal">on</span> <span class="hljs-string">'end'</span>, <span class="hljs-function"><span class="hljs-params">()</span>-&gt;</span>
+      process(buffer) <span class="hljs-keyword">if</span> buffer.length &gt; <span class="hljs-number">0</span>
+      outStream &amp;&amp; closeOutStream &amp;&amp; outStream.end()
+      done &amp;&amp; done(<span class="hljs-literal">null</span>, resultString)
+
+    inStream.<span class="hljs-literal">on</span> <span class="hljs-string">'error'</span>, <span class="hljs-function"><span class="hljs-params">(e)</span>-&gt;</span>
+      outStream &amp;&amp; closeOutStream &amp;&amp; outStream.end()
+      done &amp;&amp; done(e)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <h2 id="static-methods-factories">Static Methods / Factories</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>Create a PropertyFilter using a string containing .properties file contents</p>
+<p><code>options</code> may include any attributes which are used by the PropertyFilter constructor</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>PropertyFilter.withString = <span class="hljs-function"><span class="hljs-params">(options)</span>-&gt;</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>The string to parse the Property list from</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  string = options.string
+
+  properties = _.chain(options.string.split(<span class="hljs-string">"\n"</span>))
+    .map (line)-&gt; <span class="hljs-keyword">new</span> Property(line, options) <span class="hljs-keyword">if</span> Property.isParseableString(line)
+    .filter (property)-&gt; property <span class="hljs-comment"># reject undefined items</span>
+    .value()
+
+  options = _.extend({}, options, {<span class="hljs-attribute">properties</span>: properties})
+  <span class="hljs-keyword">new</span> PropertyFilter(options)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Create a PropertyFilter, parsing an input stream for the Property list</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>PropertyFilter.withStream = <span class="hljs-function"><span class="hljs-params">(options)</span>-&gt;</span>
+  <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> ArgumentError(<span class="hljs-string">'An input stream is required'</span>) <span class="hljs-keyword">unless</span> options &amp;&amp; options.inStream</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p><code>options.inStream</code> <strong><em>required</em></strong> -
+An input stream used to parse properties</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  inStream = options.inStream</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p><code>options.done</code> <em>optional</em> -
+Callback function with signature <code>function(error, PropertyFilter?)</code> called when the input 
+stream is finished</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  done = options.done</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>Parsed properties list</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  properties = []</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Read buffer</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  buffer = <span class="hljs-string">''</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Create a <code>Property</code> for each line which can be parsed in the input stream </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">  <span class="hljs-title">process</span> = <span class="hljs-params">(line)</span>-&gt;</span> 
+    <span class="hljs-keyword">if</span> Property.isParseableString(line)
+      properties.push(<span class="hljs-keyword">new</span> Property(line, options))</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>Read input stream</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  inStream.<span class="hljs-literal">on</span> <span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-params">(chunk)</span>-&gt;</span>
+    buffer += chunk
+    idx = buffer.indexOf(<span class="hljs-string">"\n"</span>)
+    <span class="hljs-keyword">while</span> idx &gt; -<span class="hljs-number">1</span>
+      idx++
+      line = buffer.substring(<span class="hljs-number">0</span>, idx)
+      buffer = buffer.substring(idx)
+      process(line)
+      idx = buffer.indexOf(<span class="hljs-string">"\n"</span>)
+    <span class="hljs-literal">true</span>
+
+  inStream.<span class="hljs-literal">on</span> <span class="hljs-string">'end'</span>, <span class="hljs-function"><span class="hljs-params">()</span>-&gt;</span>
+    process(buffer) <span class="hljs-keyword">if</span> buffer.length &gt; <span class="hljs-number">0</span>
+    options = _.extend({}, options, {<span class="hljs-attribute">properties</span>: properties})
+    done &amp;&amp; done(<span class="hljs-literal">null</span>, <span class="hljs-keyword">new</span> PropertyFilter(options))
+
+  inStream.<span class="hljs-literal">on</span> <span class="hljs-string">'error'</span>, <span class="hljs-function"><span class="hljs-params">(e)</span>-&gt;</span>
+    done &amp;&amp; done(e)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>Get a copy of the <code>DEFAULT_OPTIONS</code> object</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>PropertyFilter.getDefaultOptions = <span class="hljs-function"><span class="hljs-params">()</span>-&gt;</span> _.clone(DEFAULT_OPTIONS)
+
+<span class="hljs-built_in">module</span>.exports = PropertyFilter</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

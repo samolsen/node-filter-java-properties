@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>property.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>property.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>_ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>)
+ArgumentError = <span class="hljs-built_in">require</span>(<span class="hljs-string">'common-errors'</span>).ArgumentError</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Escape a string for literal match in a regular expression </p>
+<p>See <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions">https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">escapeRegExp</span> = <span class="hljs-params">(string)</span>-&gt;</span> string.replace(<span class="hljs-regexp">/[.*+?^${}()|[\]\\]/g</span>, <span class="hljs-string">"\\$&amp;"</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="property">Property</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Property</span></span>
+  <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(string)</span>-&gt;</span>
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> ArgumentError(<span class="hljs-string">'property string could not be split on an "=" token'</span>) <span class="hljs-keyword">unless</span> Property.isParseableString(string)
+    split = string.split(<span class="hljs-string">'='</span>)
+    <span class="hljs-property">@string</span> = string
+    <span class="hljs-property">@key</span> = split.shift().trim()
+    <span class="hljs-property">@value</span> = split.join(<span class="hljs-string">''</span>).trim()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Create a regular expression for matching <code>this.key</code> values surrounded by <code>delimiter</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">toRegExp</span>: <span class="hljs-function"><span class="hljs-params">(delimiter)</span> -&gt;</span>
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> ArgumentError(<span class="hljs-string">'invalid string passed to toRegExp()'</span>) <span class="hljs-keyword">unless</span> delimiter &amp;&amp; _.isString(delimiter)
+
+    splitToken = delimiter.split(<span class="hljs-string">'*'</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>If a delimiter is passed with multiple ‘*‘ characters, the behavior becomes ambiguous.
+Bail with an error.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> splitToken.length &gt; <span class="hljs-number">2</span>
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> ArgumentError(<span class="hljs-string">'property string could not be split on a single "*" delimiter'</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>If the delimiter can’t split on a ‘*‘, then bracket the key with the delimiter.
+e.g.  ‘@’ -&gt; @key@ </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> splitToken.length == <span class="hljs-number">1</span>
+      splitToken = [splitToken[<span class="hljs-number">0</span>], splitToken[<span class="hljs-number">0</span>]]
+
+    <span class="hljs-keyword">new</span> RegExp(escapeRegExp(splitToken[<span class="hljs-number">0</span>]) + escapeRegExp(<span class="hljs-property">@key</span>) + escapeRegExp(splitToken[<span class="hljs-number">1</span>]), <span class="hljs-string">'g'</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>String replacement using <code>this.key</code> and <code>this.value</code> with a delimiter.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">filterString</span>: <span class="hljs-function"><span class="hljs-params">(string, delimiter)</span>-&gt;</span>
+    regex = <span class="hljs-property">@toRegExp</span>(delimiter)
+    string.replace(regex, <span class="hljs-property">@value</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Determine if a string can be parsed and used as a property.     </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Property.isParseableString = <span class="hljs-function"><span class="hljs-params">(string)</span>-&gt;</span> (string.match(<span class="hljs-regexp">/\=/g</span>) || []).length &gt;= <span class="hljs-number">1</span>
+
+<span class="hljs-built_in">module</span>.exports = Property</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

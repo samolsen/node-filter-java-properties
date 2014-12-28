@@ -120,8 +120,7 @@ PropertyFilter.withStream = (options)->
   # An input stream used to parse properties
   inStream = options.inStream
 
-  # `options.inStream` *optional* -
-
+  # `options.done` *optional* -
   # Callback function with signature `function(error, PropertyFilter?)` called when the input 
   # stream is finished
   done = options.done
