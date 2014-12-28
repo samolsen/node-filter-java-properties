@@ -30,7 +30,7 @@ PropertyFilter.withStream({
 });
 ```
 
-### `PropertyFilter` delimiters
+#### `PropertyFilter` delimiters
 
 `PropertyFilter` instances use the Maven Resources filtering delimiter defaults of `${*}` and `@`. These delimiters may be overriden by passing a `delimiters:` option to `PropertyFilter.withString()` or `PropertyFilter.withStream()`.
 
