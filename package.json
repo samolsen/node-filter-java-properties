@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "description": "Filter source files with Java properties. Similar to Maven Resources plugin",
   "main": "index.js",
+  "repository" : {
+    "type" : "git", 
+    "url" : "https://github.com/samolsen/node-filter-java-properties.git"
+  }
   "scripts": {
     "test": "mocha --compilers coffee:coffee-script/register",
     "prepublish": "gulp"
