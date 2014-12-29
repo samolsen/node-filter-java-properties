@@ -14,6 +14,19 @@ DEFAULT_OPTIONS =
 
 ## Property Filter ##
 
+# Function for DRYing stream reading
+bufferThenReadLine = (buffer, processLine)->
+  (chunk)->
+    buffer += chunk
+    idx = buffer.indexOf("\n")
+    while idx > -1
+      idx++
+      line = buffer.substring(0, idx)
+      buffer = buffer.substring(idx)
+      processLine(line)
+      idx = buffer.indexOf("\n")
+    true
+
 class PropertyFilter
 
   # Using a static factory function is preferred to direct instantiation
@@ -74,17 +87,7 @@ class PropertyFilter
       outStream && outStream.write(filteredLine)
 
     # Read input stream
-    #
-    inStream.on 'data', (chunk)->
-      buffer += chunk
-      idx = buffer.indexOf("\n")
-      while idx > -1
-        idx++
-        line = buffer.substring(0, idx)
-        buffer = buffer.substring(idx)
-        process(line)
-        idx = buffer.indexOf("\n")
-      true
+    inStream.on 'data', bufferThenReadLine(buffer, process)
 
     inStream.on 'end', ()->
       process(buffer) if buffer.length > 0
@@ -137,16 +140,7 @@ PropertyFilter.withStream = (options)->
       properties.push(new Property(line, options))
 
   # Read input stream
-  inStream.on 'data', (chunk)->
-    buffer += chunk
-    idx = buffer.indexOf("\n")
-    while idx > -1
-      idx++
-      line = buffer.substring(0, idx)
-      buffer = buffer.substring(idx)
-      process(line)
-      idx = buffer.indexOf("\n")
-    true
+  inStream.on 'data', bufferThenReadLine(buffer, process)
 
   inStream.on 'end', ()->
     process(buffer) if buffer.length > 0
