@@ -19,6 +19,10 @@ The package contains a Javascript API and CLI for filtering strings/input stream
 
 [Use from the command line](docs/cli.md)
 
+## License
+
+[MIT License](http://en.wikipedia.org/wiki/MIT_License)
+
 [npm-url]: https://npmjs.org/package/filter-java-properties
 [npm-image]: https://badge.fury.io/js/filter-java-properties.png
 

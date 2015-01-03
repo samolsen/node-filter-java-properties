@@ -19,7 +19,11 @@
     "properties",
     "resources"
   ],
-  "author": "Sam Olsen <sam@samolsen.com>",
+  "author": {
+    "name": "Sam Olsen",
+    "email": "sam@samolsen.com",
+    "url": "https://github.com/samolsen"
+  },
   "license": "MIT",
   "devDependencies": {
     "chai": "~1.10.0",
