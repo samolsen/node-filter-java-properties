@@ -19,6 +19,15 @@ The package contains a Javascript API and CLI for filtering strings/input stream
 
 [Use from the command line](docs/cli.md)
 
+## Plugins
+
+[Gulp](http://gulpjs.com/) and [Grunt](http://gruntjs.com/) wrappers are available for this package:
+
+[Gulp plugin](https://github.com/samolsen/gulp-filter-java-properties)
+
+[Grunt plugin](https://github.com/samolsen/grunt-filter-java-properties)
+
+
 ## License
 
 [MIT License](http://en.wikipedia.org/wiki/MIT_License)
