@@ -4,6 +4,7 @@ fs = require('fs')
 path = require('path')
 expect = require('chai').expect
 ArgumentError = require('common-errors').ArgumentError
+through = require('through2')
 
 describe 'PropertyFilter', ()->
 
@@ -27,53 +28,23 @@ describe 'PropertyFilter', ()->
       expect(filter.delimiters).to.eql([delimiters])
 
   describe 'filterString', ()->
-    it 'should filter multiple properties', ()->
+    it 'should filter properties', ()->
       string = "hello @foo@\ngoodbye ${foo}"
       expect(filter.filterString(string)).to.equal("hello bar\ngoodbye bar")
 
   describe 'filterStream', ()->
-    inFilePath = path.resolve(__dirname, 'test-config.json')
     inStream = null
     beforeEach ()->
-      inStream = fs.createReadStream(inFilePath)
+      inStream = through()
+      inStream.end("hello @foo@\ngoodbye ${foo}")
 
-    it 'should throw an error if an input stream is not provided', ()->
-      fn = ()-> filter.filterStream()
-      expect(fn).to.throw(ArgumentError)
-
-    it 'should return a string if an outStream is not provided', (done)->
-      filter.filterStream(
-        inStream: inStream,
-        done: (err, resultString)->
-          expect(err).to.be.null
-          expect(resultString).not.to.be.null
+    it 'should filter properties', (done)->
+      out = ''
+      filter.filterStream(inStream)
+        .on 'data', (chunk)-> out += chunk
+        .on 'end', ()->
+          expect(out).to.equal("hello bar\ngoodbye bar")
           done()
-      )
-
-    it 'should not return a string if an outStream is passed without the buildString option set', (done)->
-      outStream = fs.createWriteStream('/tmp/property-filter-test')
-
-      filter.filterStream(
-        inStream: inStream,
-        outStream: outStream,
-        done: (err, resultString)->
-          expect(err).to.be.null
-          expect(resultString).to.be.undefined
-          done()
-      )
-    
-    it 'should return a string if an outStream is passed with the buildString option set', (done)->
-      outStream = fs.createWriteStream('/tmp/property-filter-test')
-
-      filter.filterStream(
-        inStream: inStream,
-        outStream: outStream,
-        buildString: true,
-        done: (err, resultString)->
-          expect(err).to.be.null
-          expect(resultString).not.to.be.undefined
-          done()
-      )
 
   describe 'static methods', ()->
     describe 'withString', ()->

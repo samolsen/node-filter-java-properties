@@ -9,9 +9,6 @@ DEFAULT_OPTIONS =
   # Delimiters matching Maven Resources plugin defaults,
   # see http://maven.apache.org/plugins/maven-resources-plugin/resources-mojo.html
   delimiters: ['${*}', '@'],
-  
-  # Close output streams by default, see `PropertyFilter#filterStream`
-  closeOutStream: true
 
 # Function transforming an input stream to another stream, which emits 
 # data as lines read from the input.
@@ -27,6 +24,7 @@ readLine = ()->
         line = buffer.substring(0, idx)
         buffer = buffer.substring(idx)
         idx = buffer.indexOf("\n")
+
         this.push(line)
       cb()
     
@@ -54,56 +52,16 @@ class PropertyFilter
         string = property.filterString(string, delimeter)
     string
 
-  # Filter an input stream. Writes to a string, a provided output stream, or both.
-  filterStream: (options)->
-    options = _.extend({}, DEFAULT_OPTIONS, options)
-    throw new ArgumentError('An input stream is required') unless options && options.inStream
-    
-    # `options.inStream` __*required*__ -
-    # An input stream to filter
-    inStream = options.inStream
-    
-    # `options.outStream` *optional* -
-    # An output stream to write to
-    outStream = options.outStream
-   
-    # `options.done` *optional* -
-    # Callback function with signature `function(error, resultString?)`,
-    # called when the input stream is finished
-    done = options.done
+  # Filter an input stream, returning an output stream with the filtered content
+  filterStream: (inStream)->
+    filter = this
+    filterTransform = through.obj (line, enc, cb)->
+      this.push filter.filterString(line)
+      cb()
 
-    # `options.buildString` *optional* -
-    # A flag indicating the `done` callback should receive a filtered string argument
-    # regardless of whether an output stream is available.
-    # 
-    # To use less memory, by default a result string is not built (and passed to the callback) 
-    # when an output stream is provided.
-    buildString = options.buildString || !options.outStream
-    
-    # `options.closeOutStream` *optional* -
-    # A flag indicating if this method should close the output stream. 
-    # Set to false when writing to `stdout` or another stream which can't be closed
-    closeOutStream = options.closeOutStream
-
-    # Results buffer
-    resultString = '' if buildString
-    
-    inStream.pipe(readLine())
-      
-    # Filter each line, writing to the output stream and/or appending to the result string 
-      .on 'data', (line)=>
-        filteredLine = @filterString(line)
-        resultString += filteredLine if buildString
-        outStream && outStream.write(filteredLine)
-
-      .on 'end', ()->
-        outStream && closeOutStream && outStream.end()
-        done && done(null, resultString)
-
-      .on 'error', ()->
-        outStream && closeOutStream && outStream.end()
-        done && done(e)
-      
+    inStream
+      .pipe(readLine())
+      .pipe(filterTransform)
 
 ### Static Methods / Factories ###
 
