@@ -53,20 +53,7 @@ var filteredString = filter.filterString(string);
 ```
 
 ```js
-var inputStream = READABLE_STREAM;
-var outStream = WRITEABLE_STREAM;
+var inputStream, outStream;
 
-filter.filterStream({
-  inStream: inputStream, // required, Stream of text to filter
-  outStream: outStream, // optional, Stream to write to 
-  done: function(err, filteredString) { // optional
-    // Called when reading the input stream has finished
-  },
-  buildString: false, // optional, Builds filteredString passed to `done` when true. 
-                      // By default, if `outStream` is provided the filtered string will not be 
-                      // built. If `outStream` is not provided, the filteredString is always
-                      // built and passed to the callback
-  closeOutStream: true // optional. Flag indicating this method should try to close the `outStream`
-                       // true by default
-})
+filter.filterStream(inputStream).pipe(outStream);
 ```
