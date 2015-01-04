@@ -2,6 +2,7 @@ _ = require('underscore')
 Property = require('./property')
 ArgumentError = require('common-errors').ArgumentError
 through = require('through2')
+readline = require('./readline')
 
 ### Defaults ###
 
@@ -10,29 +11,6 @@ DEFAULT_OPTIONS =
   # see http://maven.apache.org/plugins/maven-resources-plugin/resources-mojo.html
   delimiters: ['${*}', '@'],
 
-# Function transforming an input stream to another stream, which emits 
-# data as lines read from the input.
-readLine = ()->
-  buffer = ''
-  through.obj(
-    # transform function
-    (chunk, enc, cb)->
-      buffer += chunk
-      idx = buffer.indexOf("\n")
-      while idx > -1
-        idx++
-        line = buffer.substring(0, idx)
-        buffer = buffer.substring(idx)
-        idx = buffer.indexOf("\n")
-
-        this.push(line)
-      cb()
-    
-    # flush function
-    (cb)->
-      this.push(buffer)
-      cb()
-  )
 
 ## Property Filter ##
 
@@ -60,7 +38,7 @@ class PropertyFilter
       cb()
 
     inStream
-      .pipe(readLine())
+      .pipe(readline())
       .pipe(filterTransform)
 
 ### Static Methods / Factories ###
@@ -96,7 +74,7 @@ PropertyFilter.withStream = (options)->
   # Parsed properties list
   properties = []
 
-  inStream.pipe(readLine())
+  inStream.pipe(readline())
     
     .on 'data', (line)-> 
       if Property.isParseableString(line)

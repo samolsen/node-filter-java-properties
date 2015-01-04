@@ -33,7 +33,8 @@
             <div class="content"><div class='highlight'><pre>_ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>)
 Property = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./property'</span>)
 ArgumentError = <span class="hljs-built_in">require</span>(<span class="hljs-string">'common-errors'</span>).ArgumentError
-through = <span class="hljs-built_in">require</span>(<span class="hljs-string">'through2'</span>)</pre></div></div>
+through = <span class="hljs-built_in">require</span>(<span class="hljs-string">'through2'</span>)
+readline = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./readline'</span>)</pre></div></div>
             
         </li>
         
@@ -76,67 +77,6 @@ see <a href="http://maven.apache.org/plugins/maven-resources-plugin/resources-mo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Function transforming an input stream to another stream, which emits 
-data as lines read from the input.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">readLine</span> = <span class="hljs-params">()</span>-&gt;</span>
-  buffer = <span class="hljs-string">''</span>
-  through.obj(</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-5">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
-              </div>
-              <p>transform function</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    (chunk, enc, cb)-&gt;
-      buffer += chunk
-      idx = buffer.indexOf(<span class="hljs-string">"\n"</span>)
-      <span class="hljs-keyword">while</span> idx &gt; -<span class="hljs-number">1</span>
-        idx++
-        line = buffer.substring(<span class="hljs-number">0</span>, idx)
-        buffer = buffer.substring(idx)
-        idx = buffer.indexOf(<span class="hljs-string">"\n"</span>)
-
-        <span class="hljs-keyword">this</span>.push(line)
-      cb()</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>flush function</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    (cb)-&gt;
-      <span class="hljs-keyword">this</span>.push(buffer)
-      cb()
-  )</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
               <h1 id="property-filter">Property Filter</h1>
 
             </div>
@@ -147,11 +87,11 @@ data as lines read from the input.</p>
         </li>
         
         
-        <li id="section-8">
+        <li id="section-5">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>Using a static factory function is preferred to direct instantiation</p>
 
@@ -166,11 +106,11 @@ data as lines read from the input.</p>
         </li>
         
         
-        <li id="section-9">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>Pass a string through the filter for each of the receiver’s Property objects</p>
 
@@ -185,11 +125,11 @@ data as lines read from the input.</p>
         </li>
         
         
-        <li id="section-10">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>Filter an input stream, returning an output stream with the filtered content</p>
 
@@ -202,17 +142,17 @@ data as lines read from the input.</p>
       cb()
 
     inStream
-      .pipe(readLine())
+      .pipe(readline())
       .pipe(filterTransform)</pre></div></div>
             
         </li>
         
         
-        <li id="section-11">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <h2 id="static-methods-factories">Static Methods / Factories</h2>
 
@@ -221,11 +161,11 @@ data as lines read from the input.</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>Create a PropertyFilter using a string containing .properties file contents</p>
 <p><code>options</code> may include any attributes which are used by the PropertyFilter constructor</p>
@@ -237,11 +177,11 @@ data as lines read from the input.</p>
         </li>
         
         
-        <li id="section-13">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>The string to parse the Property list from</p>
 
@@ -260,11 +200,11 @@ data as lines read from the input.</p>
         </li>
         
         
-        <li id="section-14">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>Create a PropertyFilter, parsing an input stream for the Property list</p>
 
@@ -276,11 +216,11 @@ data as lines read from the input.</p>
         </li>
         
         
-        <li id="section-15">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p><code>options.inStream</code> <strong><em>required</em></strong> -
 An input stream used to parse properties</p>
@@ -292,11 +232,11 @@ An input stream used to parse properties</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p><code>options.done</code> <em>optional</em> -
 Callback function with signature <code>function(error, PropertyFilter?)</code> called when the input 
@@ -309,11 +249,11 @@ stream is finished</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Parsed properties list</p>
 
@@ -321,7 +261,7 @@ stream is finished</p>
             
             <div class="content"><div class='highlight'><pre>  properties = []
 
-  inStream.pipe(readLine())
+  inStream.pipe(readline())
     
     .<span class="hljs-literal">on</span> <span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-params">(line)</span>-&gt;</span> 
       <span class="hljs-keyword">if</span> Property.isParseableString(line)
@@ -337,11 +277,11 @@ stream is finished</p>
         </li>
         
         
-        <li id="section-18">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Get a copy of the <code>DEFAULT_OPTIONS</code> object</p>
 

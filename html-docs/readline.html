@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>readline.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>readline.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>through = <span class="hljs-built_in">require</span>(<span class="hljs-string">'through2'</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Function transforming an input stream to another stream, which emits 
+data as lines read from the input.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-params">()</span>-&gt;</span>
+  buffer = <span class="hljs-string">''</span>
+  through.obj(</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>transform function</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    (chunk, enc, cb)-&gt;
+      buffer += chunk
+      idx = buffer.indexOf(<span class="hljs-string">"\n"</span>)
+      <span class="hljs-keyword">while</span> idx &gt; -<span class="hljs-number">1</span>
+        idx++
+        line = buffer.substring(<span class="hljs-number">0</span>, idx)
+        buffer = buffer.substring(idx)
+        idx = buffer.indexOf(<span class="hljs-string">"\n"</span>)
+
+        <span class="hljs-keyword">this</span>.push(line)
+      cb()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>flush function</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    (cb)-&gt;
+      <span class="hljs-keyword">this</span>.push(buffer)
+      cb()
+  )</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
