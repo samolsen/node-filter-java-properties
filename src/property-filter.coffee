@@ -1,6 +1,7 @@
 _ = require('underscore')
 Property = require('./property')
 ArgumentError = require('common-errors').ArgumentError
+through = require('through2')
 
 ### Defaults ###
 
@@ -12,20 +13,30 @@ DEFAULT_OPTIONS =
   # Close output streams by default, see `PropertyFilter#filterStream`
   closeOutStream: true
 
-## Property Filter ##
-
-# Function for DRYing stream reading
-bufferThenReadLine = (buffer, processLine)->
-  (chunk)->
-    buffer += chunk
-    idx = buffer.indexOf("\n")
-    while idx > -1
-      idx++
-      line = buffer.substring(0, idx)
-      buffer = buffer.substring(idx)
-      processLine(line)
+# Function transforming an input stream to another stream, which emits 
+# data as lines read from the input.
+readLine = ()->
+  buffer = ''
+  through.obj(
+    # transform function
+    (chunk, enc, cb)->
+      buffer += chunk
       idx = buffer.indexOf("\n")
-    true
+      while idx > -1
+        idx++
+        line = buffer.substring(0, idx)
+        buffer = buffer.substring(idx)
+        idx = buffer.indexOf("\n")
+        this.push(line)
+      cb()
+    
+    # flush function
+    (cb)->
+      this.push(buffer)
+      cb()
+  )
+
+## Property Filter ##
 
 class PropertyFilter
 
@@ -74,29 +85,25 @@ class PropertyFilter
     # Set to false when writing to `stdout` or another stream which can't be closed
     closeOutStream = options.closeOutStream
 
-    # Read buffer
-    buffer = ''
-
     # Results buffer
     resultString = '' if buildString
-
+    
+    inStream.pipe(readLine())
+      
     # Filter each line, writing to the output stream and/or appending to the result string 
-    process = (line)=> 
-      filteredLine = @filterString(line)
-      resultString += filteredLine if buildString
-      outStream && outStream.write(filteredLine)
+      .on 'data', (line)=>
+        filteredLine = @filterString(line)
+        resultString += filteredLine if buildString
+        outStream && outStream.write(filteredLine)
 
-    # Read input stream
-    inStream.on 'data', bufferThenReadLine(buffer, process)
+      .on 'end', ()->
+        outStream && closeOutStream && outStream.end()
+        done && done(null, resultString)
 
-    inStream.on 'end', ()->
-      process(buffer) if buffer.length > 0
-      outStream && closeOutStream && outStream.end()
-      done && done(null, resultString)
-
-    inStream.on 'error', (e)->
-      outStream && closeOutStream && outStream.end()
-      done && done(e)
+      .on 'error', ()->
+        outStream && closeOutStream && outStream.end()
+        done && done(e)
+      
 
 ### Static Methods / Factories ###
 
@@ -130,25 +137,19 @@ PropertyFilter.withStream = (options)->
 
   # Parsed properties list
   properties = []
-  
-  # Read buffer
-  buffer = ''
 
-  # Create a `Property` for each line which can be parsed in the input stream 
-  process = (line)-> 
-    if Property.isParseableString(line)
-      properties.push(new Property(line, options))
+  inStream.pipe(readLine())
+    
+    .on 'data', (line)-> 
+      if Property.isParseableString(line)
+        properties.push(new Property(line, options))
 
-  # Read input stream
-  inStream.on 'data', bufferThenReadLine(buffer, process)
+    .on 'end', ()->
+      options = _.extend({}, options, {properties: properties})
+      done && done(null, new PropertyFilter(options))
 
-  inStream.on 'end', ()->
-    process(buffer) if buffer.length > 0
-    options = _.extend({}, options, {properties: properties})
-    done && done(null, new PropertyFilter(options))
-
-  inStream.on 'error', (e)->
-    done && done(e)
+    .on 'error', (e)-> 
+      done && done(e)
 
 # Get a copy of the `DEFAULT_OPTIONS` object
 PropertyFilter.getDefaultOptions = ()-> _.clone(DEFAULT_OPTIONS)

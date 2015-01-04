@@ -32,7 +32,8 @@
             
             <div class="content"><div class='highlight'><pre>_ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>)
 Property = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./property'</span>)
-ArgumentError = <span class="hljs-built_in">require</span>(<span class="hljs-string">'common-errors'</span>).ArgumentError</pre></div></div>
+ArgumentError = <span class="hljs-built_in">require</span>(<span class="hljs-string">'common-errors'</span>).ArgumentError
+through = <span class="hljs-built_in">require</span>(<span class="hljs-string">'through2'</span>)</pre></div></div>
             
         </li>
         
@@ -90,9 +91,14 @@ see <a href="http://maven.apache.org/plugins/maven-resources-plugin/resources-mo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <h1 id="property-filter">Property Filter</h1>
+              <p>Function transforming an input stream to another stream, which emits 
+data as lines read from the input.</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">readLine</span> = <span class="hljs-params">()</span>-&gt;</span>
+  buffer = <span class="hljs-string">''</span>
+  through.obj(</pre></div></div>
             
         </li>
         
@@ -103,23 +109,20 @@ see <a href="http://maven.apache.org/plugins/maven-resources-plugin/resources-mo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Function for DRYing stream reading</p>
+              <p>transform function</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">bufferThenReadLine</span> = <span class="hljs-params">(buffer, processLine)</span>-&gt;</span>
-  (chunk)-&gt;
-    buffer += chunk
-    idx = buffer.indexOf(<span class="hljs-string">"\n"</span>)
-    <span class="hljs-keyword">while</span> idx &gt; -<span class="hljs-number">1</span>
-      idx++
-      line = buffer.substring(<span class="hljs-number">0</span>, idx)
-      buffer = buffer.substring(idx)
-      processLine(line)
+            <div class="content"><div class='highlight'><pre>    (chunk, enc, cb)-&gt;
+      buffer += chunk
       idx = buffer.indexOf(<span class="hljs-string">"\n"</span>)
-    <span class="hljs-literal">true</span>
-
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PropertyFilter</span></span></pre></div></div>
+      <span class="hljs-keyword">while</span> idx &gt; -<span class="hljs-number">1</span>
+        idx++
+        line = buffer.substring(<span class="hljs-number">0</span>, idx)
+        buffer = buffer.substring(idx)
+        idx = buffer.indexOf(<span class="hljs-string">"\n"</span>)
+        <span class="hljs-keyword">this</span>.push(line)
+      cb()</pre></div></div>
             
         </li>
         
@@ -129,6 +132,40 @@ see <a href="http://maven.apache.org/plugins/maven-resources-plugin/resources-mo
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>flush function</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    (cb)-&gt;
+      <span class="hljs-keyword">this</span>.push(buffer)
+      cb()
+  )</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h1 id="property-filter">Property Filter</h1>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PropertyFilter</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>Using a static factory function is preferred to direct instantiation</p>
 
@@ -143,11 +180,11 @@ see <a href="http://maven.apache.org/plugins/maven-resources-plugin/resources-mo
         </li>
         
         
-        <li id="section-8">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>Pass a string through the filter for each of the receiver’s Property objects</p>
 
@@ -162,11 +199,11 @@ see <a href="http://maven.apache.org/plugins/maven-resources-plugin/resources-mo
         </li>
         
         
-        <li id="section-9">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>Filter an input stream. Writes to a string, a provided output stream, or both.</p>
 
@@ -179,11 +216,11 @@ see <a href="http://maven.apache.org/plugins/maven-resources-plugin/resources-mo
         </li>
         
         
-        <li id="section-10">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p><code>options.inStream</code> <strong><em>required</em></strong> -
 An input stream to filter</p>
@@ -195,11 +232,11 @@ An input stream to filter</p>
         </li>
         
         
-        <li id="section-11">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p><code>options.outStream</code> <em>optional</em> -
 An output stream to write to</p>
@@ -211,11 +248,11 @@ An output stream to write to</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p><code>options.done</code> <em>optional</em> -
 Callback function with signature <code>function(error, resultString?)</code>,
@@ -228,11 +265,11 @@ called when the input stream is finished</p>
         </li>
         
         
-        <li id="section-13">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p><code>options.buildString</code> <em>optional</em> -
 A flag indicating the <code>done</code> callback should receive a filtered string argument
@@ -247,11 +284,11 @@ when an output stream is provided.</p>
         </li>
         
         
-        <li id="section-14">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p><code>options.closeOutStream</code> <em>optional</em> -
 A flag indicating if this method should close the output stream. 
@@ -264,50 +301,19 @@ Set to false when writing to <code>stdout</code> or another stream which can’t
         </li>
         
         
-        <li id="section-15">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
-              </div>
-              <p>Read buffer</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    buffer = <span class="hljs-string">''</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-16">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
-              </div>
-              <p>Results buffer</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    resultString = <span class="hljs-string">''</span> <span class="hljs-keyword">if</span> buildString</pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <p>Filter each line, writing to the output stream and/or appending to the result string </p>
+              <p>Results buffer</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">process</span> = <span class="hljs-params">(line)</span>=&gt;</span> 
-      filteredLine = <span class="hljs-property">@filterString</span>(line)
-      resultString += filteredLine <span class="hljs-keyword">if</span> buildString
-      outStream &amp;&amp; outStream.write(filteredLine)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    resultString = <span class="hljs-string">''</span> <span class="hljs-keyword">if</span> buildString
+    
+    inStream.pipe(readLine())</pre></div></div>
             
         </li>
         
@@ -318,20 +324,22 @@ Set to false when writing to <code>stdout</code> or another stream which can’t
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <p>Read input stream</p>
+              <p>Filter each line, writing to the output stream and/or appending to the result string </p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    inStream.<span class="hljs-literal">on</span> <span class="hljs-string">'data'</span>, bufferThenReadLine(buffer, process)
+            <div class="content"><div class='highlight'><pre>      .<span class="hljs-literal">on</span> <span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-params">(line)</span>=&gt;</span>
+        filteredLine = <span class="hljs-property">@filterString</span>(line)
+        resultString += filteredLine <span class="hljs-keyword">if</span> buildString
+        outStream &amp;&amp; outStream.write(filteredLine)
 
-    inStream.<span class="hljs-literal">on</span> <span class="hljs-string">'end'</span>, <span class="hljs-function"><span class="hljs-params">()</span>-&gt;</span>
-      process(buffer) <span class="hljs-keyword">if</span> buffer.length &gt; <span class="hljs-number">0</span>
-      outStream &amp;&amp; closeOutStream &amp;&amp; outStream.end()
-      done &amp;&amp; done(<span class="hljs-literal">null</span>, resultString)
+      .<span class="hljs-literal">on</span> <span class="hljs-string">'end'</span>, <span class="hljs-function"><span class="hljs-params">()</span>-&gt;</span>
+        outStream &amp;&amp; closeOutStream &amp;&amp; outStream.end()
+        done &amp;&amp; done(<span class="hljs-literal">null</span>, resultString)
 
-    inStream.<span class="hljs-literal">on</span> <span class="hljs-string">'error'</span>, <span class="hljs-function"><span class="hljs-params">(e)</span>-&gt;</span>
-      outStream &amp;&amp; closeOutStream &amp;&amp; outStream.end()
-      done &amp;&amp; done(e)</pre></div></div>
+      .<span class="hljs-literal">on</span> <span class="hljs-string">'error'</span>, <span class="hljs-function"><span class="hljs-params">()</span>-&gt;</span>
+        outStream &amp;&amp; closeOutStream &amp;&amp; outStream.end()
+        done &amp;&amp; done(e)</pre></div></div>
             
         </li>
         
@@ -447,7 +455,20 @@ stream is finished</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  properties = []</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  properties = []
+
+  inStream.pipe(readLine())
+    
+    .<span class="hljs-literal">on</span> <span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-params">(line)</span>-&gt;</span> 
+      <span class="hljs-keyword">if</span> Property.isParseableString(line)
+        properties.push(<span class="hljs-keyword">new</span> Property(line, options))
+
+    .<span class="hljs-literal">on</span> <span class="hljs-string">'end'</span>, <span class="hljs-function"><span class="hljs-params">()</span>-&gt;</span>
+      options = _.extend({}, options, {<span class="hljs-attribute">properties</span>: properties})
+      done &amp;&amp; done(<span class="hljs-literal">null</span>, <span class="hljs-keyword">new</span> PropertyFilter(options))
+
+    .<span class="hljs-literal">on</span> <span class="hljs-string">'error'</span>, <span class="hljs-function"><span class="hljs-params">(e)</span>-&gt;</span> 
+      done &amp;&amp; done(e)</pre></div></div>
             
         </li>
         
@@ -457,61 +478,6 @@ stream is finished</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-26">&#182;</a>
-              </div>
-              <p>Read buffer</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  buffer = <span class="hljs-string">''</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-27">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
-              </div>
-              <p>Create a <code>Property</code> for each line which can be parsed in the input stream </p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">  <span class="hljs-title">process</span> = <span class="hljs-params">(line)</span>-&gt;</span> 
-    <span class="hljs-keyword">if</span> Property.isParseableString(line)
-      properties.push(<span class="hljs-keyword">new</span> Property(line, options))</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-28">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
-              </div>
-              <p>Read input stream</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  inStream.<span class="hljs-literal">on</span> <span class="hljs-string">'data'</span>, bufferThenReadLine(buffer, process)
-
-  inStream.<span class="hljs-literal">on</span> <span class="hljs-string">'end'</span>, <span class="hljs-function"><span class="hljs-params">()</span>-&gt;</span>
-    process(buffer) <span class="hljs-keyword">if</span> buffer.length &gt; <span class="hljs-number">0</span>
-    options = _.extend({}, options, {<span class="hljs-attribute">properties</span>: properties})
-    done &amp;&amp; done(<span class="hljs-literal">null</span>, <span class="hljs-keyword">new</span> PropertyFilter(options))
-
-  inStream.<span class="hljs-literal">on</span> <span class="hljs-string">'error'</span>, <span class="hljs-function"><span class="hljs-params">(e)</span>-&gt;</span>
-    done &amp;&amp; done(e)</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-29">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Get a copy of the <code>DEFAULT_OPTIONS</code> object</p>
 
